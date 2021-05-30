@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+
+<AnchorPane prefHeight="588.0" prefWidth="814.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="canvas.CanvasController">
+   <children>
+      <ImageView fitHeight="588.0" fitWidth="839.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/waves.jpg" />
+         </image>
+      </ImageView>
+      <AnchorPane layoutX="154.0" layoutY="87.0">
+         <children>
+            <StackPane>
+               <children>
+                  <ImageView fitHeight="316.0" fitWidth="435.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/canvas2.png" />
+                     </image>
+                  </ImageView>
+                  <Canvas fx:id="canvas" height="281.0" width="399.0" />
+               </children>
+            </StackPane>
+         </children>
+      </AnchorPane>
+      <HBox layoutX="154.0" layoutY="426.0" prefHeight="78.0" prefWidth="406.0">
+         <children>
+            <StackPane>
+               <HBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </HBox.margin>
+               <children>
+                  <ImageView fitHeight="80.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/canvas1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/crying_cat.png" />
+                     </image>
+                  </ImageView>
+                  <Button fx:id="dont_know_button" mnemonicParsing="false" onAction="#dontKnow" opacity="0.0" prefHeight="50.0" prefWidth="50.0" />
+               </children>
+            </StackPane>
+            <StackPane>
+               <HBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </HBox.margin>
+               <children>
+                  <ImageView fitHeight="80.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/canvas1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/shocked_cat.png" />
+                     </image>
+                  </ImageView>
+                  <Button fx:id="need_practice_button" mnemonicParsing="false" onAction="#needPractice" opacity="0.0" prefHeight="50.0" prefWidth="50.0" />
+               </children>
+            </StackPane>
+            <StackPane>
+               <HBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </HBox.margin>
+               <children>
+                  <ImageView fitHeight="80.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/canvas1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/lovely_cat.png" />
+                     </image>
+                  </ImageView>
+                  <Button fx:id="mastered_button" mnemonicParsing="false" onAction="#mastered" opacity="0.0" prefHeight="50.0" prefWidth="50.0" />
+               </children>
+            </StackPane>
+         </children>
+      </HBox>
+      <GridPane layoutX="586.0" layoutY="137.0" prefHeight="215.0" prefWidth="114.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="56.0" minWidth="10.0" prefWidth="40.79998779296875" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.60003662109375" minWidth="10.0" prefWidth="74.40001220703125" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ImageView fx:id="pen" fitHeight="166.0" fitWidth="109.0" onMouseClicked="#changeToPen" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/pen.png" />
+               </image>
+               <GridPane.margin>
+                  <Insets top="100.0" />
+               </GridPane.margin>
+            </ImageView>
+            <ImageView fx:id="brush" fitHeight="163.0" fitWidth="115.0" onMouseClicked="#changeToBrush" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+               <image>
+                  <Image url="@../assets/brush.png" />
+               </image>
+            </ImageView>
+         </children>
+      </GridPane>
+      <ImageView fx:id="back_arrow_canvas_screen" fitHeight="50.0" fitWidth="50.0" layoutX="8.0" layoutY="7.0" onMouseClicked="#goBackToStatisticsScreen" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/back_arrow.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>
