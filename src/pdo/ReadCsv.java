@@ -4,22 +4,23 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class ReadCsv {
 
-    public static Map<String, String> readCsv(String pathToCsv) {
+    public static Map<String, String> readConvertCsvToMap(String pathToCsv) {
         Map<String, String> kanaToRomanji = new LinkedHashMap<>();
         try {
             File file = new File(pathToCsv);
             Scanner scanner = new Scanner(file);
             while (scanner.hasNext()) {
                 String[] line = scanner.nextLine().split(",");
-                System.out.println(line);
-                kanaToRomanji.putIfAbsent(line[0], line[1]);
+                try{
+                    kanaToRomanji.putIfAbsent(line[0], line[1]);
+                }catch (ArrayIndexOutOfBoundsException e){
+                    System.out.println("no record, skipping");
+                }
+
             }
         } catch (FileNotFoundException e) {
             System.out.println("No file at the given location " + pathToCsv);
