@@ -15,8 +15,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import models.Brush;
+import models.KanaProgress;
 import models.Pen;
-import pdo.ReadCsv;
+import pdo.ReadWriteCsv;
 import statistics.Statistics;
 
 import java.io.FileInputStream;
@@ -25,7 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class CanvasController implements Initializable, ReadCsv {
+public class CanvasController implements Initializable, ReadWriteCsv {
     @FXML
     private Canvas canvas;
     @FXML
@@ -36,10 +37,15 @@ public class CanvasController implements Initializable, ReadCsv {
     private static int currentRound = 0;
     private static String[] morae;
 
+    private static ArrayList<KanaProgress> currentSet;
+    private  ArrayList<KanaProgress> all;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        all = getUserProgress();
         graphicsContext = canvas.getGraphicsContext2D();
-        morae = chooseMoraeTraining();
+        currentSet = new ArrayList<>();
+        morae = chooseMoraeChallenge();
         drawTrainingProgressHBox(morae);
     }
 
@@ -64,23 +70,21 @@ public class CanvasController implements Initializable, ReadCsv {
 
         }
 
-
     }
 
     private String[] chooseMoraeChallenge(){
-        Map<String, String> map = readCsvConvertToMap("src\\pdo\\kana_to_romanji.csv");
-        List<String> keys = new ArrayList<>(map.keySet());
         String[] result = new String[ROUNDS_COUNT];
 
         Random rand = new Random();
         for (int i = 0; i < ROUNDS_COUNT; i++) {
-            String key = keys.get(rand.nextInt(keys.size()));
-            result[i] = map.get(key);
+            KanaProgress kanaProgress = all.get(rand.nextInt(all.size()));
+            currentSet.add(kanaProgress);
+            result[i] = kanaProgress.getMora();
         }
         return result;
     }
-    private String[]  chooseMoraeTraining(){
-        Map<String, String> map = readCsvConvertToMap("src\\pdo\\kana_to_romanji.csv");
+    private String[] chooseMoraeTraining(){
+        Map<String, String> map = readCsvConvertToMap();
         List<String> keys = new ArrayList<>(map.keySet());
         String[] result = new String[ROUNDS_COUNT];
 
@@ -103,15 +107,27 @@ public class CanvasController implements Initializable, ReadCsv {
 
     public void mastered(){
         if(currentRound <= ROUNDS_COUNT) {
-            currentRound++;
-            progressHbox.getChildren().clear();
-            graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawTrainingProgressHBox(morae);
+            currentSet.get(currentRound).increaseMasteredCount(1);
+            writeUserProgressToCsv(currentSet.get(currentRound));
+            nextRound();
         }
         System.out.println("mastered");
     }
     public void dontKnow() {
         System.out.println("idk");
+    }
+
+    public void nextRound(){
+        if(currentRound == ROUNDS_COUNT){
+            // todo show another screen with results
+            // save to csv
+        }else{
+            currentRound++;
+            progressHbox.getChildren().clear();
+            graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawTrainingProgressHBox(morae);
+        }
+
     }
 
     public void changeToPen(MouseEvent mouseEvent) {

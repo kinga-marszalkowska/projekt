@@ -30,9 +30,22 @@ public class KanaProgress {
     }
 
     public double calculateProgress(){
-        //todo better way?
+        //todo better way? so that it is always in rango 0.1 - 1
         return (double)this.masteredCount/10;
     }
+
+    public void increaseMasteredCount(int i){
+        this.masteredCount += i;
+    }
+
+    public void increaseDontKnowCount(int i){
+        this.dontKnowCount += i;
+    }
+
+    public void increaseRepetitionsCount(int i){
+        this.repetitionsCount += i;
+    }
+
 
     public String getRomanji() {
         return romanji;
@@ -82,6 +95,10 @@ public class KanaProgress {
         this.masteredCount = masteredCount;
     }
 
+    public String toCsvLine(){
+        return String.format("%s,%s,%s,%s,%s,%s", mora, romanji, repetitionsCount, dontKnowCount, practiceCount, masteredCount);
+    }
+
     @Override
     public String toString() {
         return "{" + mora + " " + romanji +
@@ -91,4 +108,5 @@ public class KanaProgress {
                 ", masteredCount=" + masteredCount +
                 '}';
     }
+
 }

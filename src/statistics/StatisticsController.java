@@ -13,14 +13,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import pdo.ReadCsv;
+import pdo.ReadWriteCsv;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class StatisticsController implements Initializable, ReadCsv {
+public class StatisticsController implements Initializable, ReadWriteCsv {
     @FXML
     public GridPane charsGridpane;
 
@@ -34,7 +34,7 @@ public class StatisticsController implements Initializable, ReadCsv {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        chars = readCsvConvertToMap("src\\pdo\\kana_to_romanji.csv");
+        chars = readCsvConvertToMap();
         fillGridpaneWithElements();
     }
 
