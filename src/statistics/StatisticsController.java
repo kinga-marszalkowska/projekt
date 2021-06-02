@@ -20,21 +20,21 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class StatisticsController implements Initializable {
+public class StatisticsController implements Initializable, ReadCsv {
     @FXML
     public GridPane charsGridpane;
 
     Map<String, String> chars;
 
     /**
-     * all kanas are divided into multiple pages that can be browsed by clicking navigation arrows
-     * kanaPageNumber keeps track of what should be displayed
+     * all kanas are divided into multiple pages that they can be browsed by clicking navigation arrows
+     * kanaPageNumber keeps track of which page should be displayed
      * */
     private int moraPageNumber = 0;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        chars = ReadCsv.readConvertCsvToMap("D:\\PJATK\\POJ\\lab11-copy\\src\\pdo\\kana_to_romanji.csv");
+        chars = readCsvConvertToMap("src\\pdo\\kana_to_romanji.csv");
         fillGridpaneWithElements();
     }
 

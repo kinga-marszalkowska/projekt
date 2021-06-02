@@ -25,11 +25,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class CanvasController implements Initializable {
+public class CanvasController implements Initializable, ReadCsv {
     @FXML
     private Canvas canvas;
     @FXML
     private HBox progressHbox;
+
     private GraphicsContext graphicsContext;
     private static final int ROUNDS_COUNT = 5;
     private static int currentRound = 0;
@@ -39,24 +40,26 @@ public class CanvasController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         graphicsContext = canvas.getGraphicsContext2D();
         morae = chooseMoraeTraining();
-        drawHBox(morae);
+        drawTrainingProgressHBox(morae);
     }
 
-    private void drawHBox(String[] morae){
+    private void drawTrainingProgressHBox(String[] morae){
         for (int i = 0; i < ROUNDS_COUNT; i++) {
             if(i == currentRound){
                 Label label = new Label(morae[i]);
                 label.setFont(new Font("System", 30));
                 progressHbox.getChildren().add(label);
             }
-            FileInputStream input = null;
+            FileInputStream input;
             try {
-                input = new FileInputStream("D:\\PJATK\\POJ\\lab11-copy\\src\\assets\\dot.png");
+                input = new FileInputStream("src\\assets\\dot.png");
                 Image image = new Image(input);
                 ImageView imageView = new ImageView(image);
                 progressHbox.getChildren().add(imageView);
             } catch (FileNotFoundException e) {
-                System.out.println("Image not found");
+                Label label = new Label("⚫");
+                label.setFont(new Font("System", 30));
+                progressHbox.getChildren().add(label);
             }
 
         }
@@ -65,7 +68,7 @@ public class CanvasController implements Initializable {
     }
 
     private String[] chooseMoraeChallenge(){
-        Map<String, String> map = ReadCsv.readConvertCsvToMap("D:\\PJATK\\POJ\\lab11-copy\\src\\pdo\\kana_to_romanji.csv");
+        Map<String, String> map = readCsvConvertToMap("src\\pdo\\kana_to_romanji.csv");
         List<String> keys = new ArrayList<>(map.keySet());
         String[] result = new String[ROUNDS_COUNT];
 
@@ -77,7 +80,7 @@ public class CanvasController implements Initializable {
         return result;
     }
     private String[]  chooseMoraeTraining(){
-        Map<String, String> map = ReadCsv.readConvertCsvToMap("D:\\PJATK\\POJ\\lab11-copy\\src\\pdo\\kana_to_romanji.csv");
+        Map<String, String> map = readCsvConvertToMap("src\\pdo\\kana_to_romanji.csv");
         List<String> keys = new ArrayList<>(map.keySet());
         String[] result = new String[ROUNDS_COUNT];
 
@@ -85,6 +88,12 @@ public class CanvasController implements Initializable {
         for (int i = 0; i < ROUNDS_COUNT; i++) {
             String key = keys.get(rand.nextInt(keys.size()));
             result[i] = key;
+//            for (int j = 0; j < key.length(); j++) {
+//                Character.UnicodeBlock b = Character.UnicodeBlock.of(key.charAt(j));
+//
+//                if (b == Character.UnicodeBlock.HIRAGANA) System.out.println(" hiragana");
+//                if (b == Character.UnicodeBlock.KATAKANA) System.out.println(" katakana");
+//            }
         }
         return result;
     }
@@ -97,7 +106,7 @@ public class CanvasController implements Initializable {
             currentRound++;
             progressHbox.getChildren().clear();
             graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawHBox(morae);
+            drawTrainingProgressHBox(morae);
         }
         System.out.println("mastered");
     }
