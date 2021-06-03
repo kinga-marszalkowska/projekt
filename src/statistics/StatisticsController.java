@@ -13,18 +13,21 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import models.KanaProgress;
 import pdo.ReadWriteCsv;
+import services.DBCommunication;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class StatisticsController implements Initializable, ReadWriteCsv {
+public class StatisticsController implements Initializable, DBCommunication {
     @FXML
     public GridPane charsGridpane;
 
-    Map<String, String> chars;
+    private ArrayList<KanaProgress> all;
 
     /**
      * all kanas are divided into multiple pages that they can be browsed by clicking navigation arrows
@@ -34,7 +37,7 @@ public class StatisticsController implements Initializable, ReadWriteCsv {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        chars = readCsvConvertToMap();
+        all = readKanas();
         fillGridpaneWithElements();
     }
 
@@ -45,11 +48,14 @@ public class StatisticsController implements Initializable, ReadWriteCsv {
          * ex. if on page 0 - no elements will be skipped,
          *     if on page 1 - first {size} elements will be skipped
          * */
-        Object[] charsForCurrentPage = chars.keySet().stream().skip(moraPageNumber *size).toArray();
+
+        Object[] charsForCurrentPage = all.stream().skip(moraPageNumber *size).toArray();
+        System.out.println(all.stream().skip(moraPageNumber *size));
+
         // if no elements are left to display, come back to page no.0
         if(charsForCurrentPage.length == 0) {
             moraPageNumber = 0;
-            charsForCurrentPage = chars.keySet().stream().skip(moraPageNumber *size).toArray();
+            charsForCurrentPage = all.stream().skip(moraPageNumber *size).toArray();
         }
 
         int column = 0;
@@ -59,7 +65,7 @@ public class StatisticsController implements Initializable, ReadWriteCsv {
             if(size > 0){
                 if(column < charsGridpane.getColumnCount()){
                     if(row < charsGridpane.getRowCount()){
-                        insertElementToGridpane(japaneseChar.toString(), row, column);
+                        insertElementToGridpane((KanaProgress)japaneseChar, row, column);
                         size--;
                         row++;
                     } else {
@@ -76,14 +82,13 @@ public class StatisticsController implements Initializable, ReadWriteCsv {
     }
 
 
-    private void insertElementToGridpane(String japaneseChar, int row, int column){
+    private void insertElementToGridpane(KanaProgress japaneseChar, int row, int column){
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
-        Label japaneseCharLabel = new Label(japaneseChar);
+        Label japaneseCharLabel = new Label(japaneseChar.getMora());
         japaneseCharLabel.setFont(new Font("System", 20));
-        Label romanjiCharLabel = new Label(chars.get(japaneseChar));
-        //todo show value depending on how well the char is known
-        ProgressBar progressBar = new ProgressBar(Math.random());
+        Label romanjiCharLabel = new Label(japaneseChar.getRomanji());
+        ProgressBar progressBar = new ProgressBar(japaneseChar.getProgress());
         progressBar.setPrefSize(70, 12);
         vBox.getChildren().addAll(japaneseCharLabel, romanjiCharLabel, progressBar);
 

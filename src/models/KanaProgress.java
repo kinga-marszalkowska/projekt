@@ -29,13 +29,17 @@ public class KanaProgress {
 
     }
 
-    public double calculateProgress(){
+    public double getProgress(){
         //todo better way? so that it is always in rango 0.1 - 1
         return (double)this.masteredCount/10;
     }
 
     public void increaseMasteredCount(int i){
         this.masteredCount += i;
+    }
+
+    public void increasePracticeCount(int i){
+        this.practiceCount += i;
     }
 
     public void increaseDontKnowCount(int i){

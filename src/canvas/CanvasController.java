@@ -17,16 +17,19 @@ import javafx.stage.Stage;
 import models.Brush;
 import models.KanaProgress;
 import models.Pen;
+import pdo.DatabaseConnection;
 import pdo.ReadWriteCsv;
+import services.DBCommunication;
 import statistics.Statistics;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.*;
 
-public class CanvasController implements Initializable, ReadWriteCsv {
+public class CanvasController implements Initializable, DBCommunication, ReadWriteCsv {
     @FXML
     private Canvas canvas;
     @FXML
@@ -42,7 +45,7 @@ public class CanvasController implements Initializable, ReadWriteCsv {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        all = getUserProgress();
+        all = readKanas();
         graphicsContext = canvas.getGraphicsContext2D();
         currentSet = new ArrayList<>();
         morae = chooseMoraeChallenge();
@@ -73,17 +76,19 @@ public class CanvasController implements Initializable, ReadWriteCsv {
     }
 
     private String[] chooseMoraeChallenge(){
+        // get kanas that are were marked practice or have > 0 practice count
         String[] result = new String[ROUNDS_COUNT];
 
         Random rand = new Random();
         for (int i = 0; i < ROUNDS_COUNT; i++) {
             KanaProgress kanaProgress = all.get(rand.nextInt(all.size()));
             currentSet.add(kanaProgress);
-            result[i] = kanaProgress.getMora();
+            result[i] = String.format("%s (%s)",kanaProgress.getMora(), kanaProgress.getRomanji());
         }
         return result;
     }
     private String[] chooseMoraeTraining(){
+        // get kanas that are marked dont know or have 0 practice count
         Map<String, String> map = readCsvConvertToMap();
         List<String> keys = new ArrayList<>(map.keySet());
         String[] result = new String[ROUNDS_COUNT];
@@ -101,26 +106,39 @@ public class CanvasController implements Initializable, ReadWriteCsv {
         }
         return result;
     }
+
     public void needPractice(){
+        if(currentRound < ROUNDS_COUNT) {
+            currentSet.get(currentRound).increasePracticeCount(1);
+            currentSet.get(currentRound).increaseRepetitionsCount(1);
+            updateKana(currentSet.get(currentRound));
+            nextRound();
+        }
         System.out.println("practice");
     }
 
     public void mastered(){
-        if(currentRound <= ROUNDS_COUNT) {
+        if(currentRound < ROUNDS_COUNT) {
             currentSet.get(currentRound).increaseMasteredCount(1);
-            writeUserProgressToCsv(currentSet.get(currentRound));
+            currentSet.get(currentRound).increaseRepetitionsCount(1);
+            updateKana(currentSet.get(currentRound));
             nextRound();
         }
         System.out.println("mastered");
     }
     public void dontKnow() {
+        if(currentRound < ROUNDS_COUNT) {
+            currentSet.get(currentRound).increaseDontKnowCount(1);
+            currentSet.get(currentRound).increaseRepetitionsCount(1);
+            updateKana(currentSet.get(currentRound));
+            nextRound();
+        }
         System.out.println("idk");
     }
 
     public void nextRound(){
         if(currentRound == ROUNDS_COUNT){
             // todo show another screen with results
-            // save to csv
         }else{
             currentRound++;
             progressHbox.getChildren().clear();

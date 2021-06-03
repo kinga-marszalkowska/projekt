@@ -16,10 +16,8 @@ public class DatabaseConnection {
     private static final String PRACTICE_COUNT_COLUMN = "practiceCount";
     private static final String MASTERED_COUNT_COLUMN = "masteredCount";
 
-
-
-    public static List<KanaProgress> getKanasFromDB() throws SQLException {
-        List<KanaProgress> result = new ArrayList<>();
+    public static ArrayList<KanaProgress> getKanasFromDB() throws SQLException {
+        ArrayList<KanaProgress> result = new ArrayList<>();
         String selectSQL = String.format("SELECT * FROM %s",TABLE_NAME);
         Connection connection = DriverManager.getConnection(CONN);
 
@@ -28,9 +26,6 @@ public class DatabaseConnection {
 
         try (connection; preparedStatement; resultSet) {
             while (resultSet.next()) {
-                String kana = resultSet.getString(KANA_COLUMN);
-                String romanji = resultSet.getString(KANA_COLUMN);
-                String rep = resultSet.getString(KANA_COLUMN);
                 KanaProgress kanaProgress = new KanaProgress(
                         resultSet.getString(KANA_COLUMN),
                         resultSet.getString(ROMANJI_COLUMN),
@@ -40,7 +35,6 @@ public class DatabaseConnection {
                         resultSet.getInt(MASTERED_COUNT_COLUMN)
                         );
                 result.add(kanaProgress);
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -48,5 +42,46 @@ public class DatabaseConnection {
 
         return result;
 
+    }
+
+    public static void saveKanaToDB(KanaProgress kanaProgress) throws SQLException {
+        String insertSQL = String.format("INSERT INTO %s VALUES (?, ?, ?, ?, ?, ?)", TABLE_NAME);
+        Connection connection = DriverManager.getConnection(CONN);
+        PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
+        try (connection; preparedStatement) {
+            preparedStatement.setString(1, kanaProgress.getMora());
+            preparedStatement.setString(2, kanaProgress.getRomanji());
+            preparedStatement.setInt(3, 0);
+            preparedStatement.setInt(4, 0);
+            preparedStatement.setInt(5, 0);
+            preparedStatement.setInt(6, 0);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKanaToDB(KanaProgress kanaProgress) throws SQLException{
+        String updateSQL = String.format("UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?  WHERE %s = ? and  %s = ?",
+                TABLE_NAME,
+                REPETITIONS_COUNT_COLUMN, DONT_KNOW_COUNT_COLUMN, PRACTICE_COUNT_COLUMN, MASTERED_COUNT_COLUMN,
+                KANA_COLUMN, ROMANJI_COLUMN);
+
+        Connection connection = DriverManager.getConnection(CONN);
+        try (connection) {
+            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
+            preparedStatement.setInt(1, kanaProgress.getRepetitionsCount());
+            preparedStatement.setInt(2, kanaProgress.getDontKnowCount());
+            preparedStatement.setInt(3, kanaProgress.getPracticeCount());
+            preparedStatement.setInt(4, kanaProgress.getMasteredCount());
+            preparedStatement.setString(5, kanaProgress.getMora());
+            preparedStatement.setString(6, kanaProgress.getRomanji());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
     }
 }
