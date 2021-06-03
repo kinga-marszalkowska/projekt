@@ -1,5 +1,7 @@
 package statistics;
 
+import canvas.Canvas;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,13 +16,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import models.KanaProgress;
-import pdo.ReadWriteCsv;
+import models.LearningMode;
 import services.DBCommunication;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class StatisticsController implements Initializable, DBCommunication {
@@ -50,8 +51,6 @@ public class StatisticsController implements Initializable, DBCommunication {
          * */
 
         Object[] charsForCurrentPage = all.stream().skip(moraPageNumber *size).toArray();
-        System.out.println(all.stream().skip(moraPageNumber *size));
-
         // if no elements are left to display, come back to page no.0
         if(charsForCurrentPage.length == 0) {
             moraPageNumber = 0;
@@ -110,6 +109,7 @@ public class StatisticsController implements Initializable, DBCommunication {
 
     public void goToCanvasScreen(MouseEvent mouseEvent) throws IOException {
         Stage stage = Statistics.getMainAppStage();
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../canvas/canvas.fxml"));
         AnchorPane anchorPane = loader.load();
         Scene scene = new Scene(anchorPane);
@@ -118,4 +118,11 @@ public class StatisticsController implements Initializable, DBCommunication {
     }
 
 
+    public void setTrainingMode(ActionEvent actionEvent) {
+        Canvas.setMode(LearningMode.TRAINING);
+    }
+
+    public void setChallengeMode(ActionEvent actionEvent) {
+        Canvas.setMode(LearningMode.CHALLENGE);
+    }
 }

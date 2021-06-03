@@ -75,8 +75,8 @@
          <bottom>
             <HBox alignment="CENTER" prefHeight="41.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="trainingButton" mnemonicParsing="false" onMouseClicked="#goToCanvasScreen" text="training" />
-                  <Button fx:id="challengeButton" mnemonicParsing="false" onMouseClicked="#goToCanvasScreen" text="challenge" textAlignment="CENTER" />
+                  <Button fx:id="trainingButton" mnemonicParsing="false" onAction="#setTrainingMode" onMouseClicked="#goToCanvasScreen" text="training" />
+                  <Button fx:id="challengeButton" mnemonicParsing="false" onAction="#setChallengeMode" onMouseClicked="#goToCanvasScreen" text="challenge" textAlignment="CENTER" />
                </children>
                <opaqueInsets>
                   <Insets />

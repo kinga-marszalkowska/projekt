@@ -33,25 +33,29 @@ public interface ReadWriteCsv {
         return map;
     }
 
-    default ArrayList<KanaProgress> getUserProgress(){
+     static ArrayList<KanaProgress> getUserProgress(){
         ArrayList<KanaProgress> kanaProgressArrayList = new ArrayList<>();
+
         try {
             File file = new File(PATH_TO_USER_PROGRESS_CSV);
             Scanner scanner = new Scanner(file);
             String headerLine = scanner.nextLine();
             while (scanner.hasNext()) {
                 String[] line = scanner.nextLine().trim().split(",");
+//                System.out.println("BEGIN TRANSACTION;");
+//                System.out.println(String.format("INSERT INTO kana VALUES(\"%s\",\"%s\",0,0,0,0);", line[0], line[1]));
+//                System.out.println("COMMIT;");
                 try{
                     //todo skip first line
                     kanaProgressArrayList.add(new KanaProgress(line));
                 }catch (ArrayIndexOutOfBoundsException e){
                     System.out.println("no record, skipping");
                 }
-
             }
         } catch (FileNotFoundException e) {
             System.out.println("No file at the given location " + PATH_TO_USER_PROGRESS_CSV);
         }
+
         return kanaProgressArrayList;
     }
 

@@ -29,9 +29,14 @@ public class KanaProgress {
 
     }
 
+    public static int getMasteryCount() {
+        return MASTERY_COUNT;
+    }
+
     public double getProgress(){
         //todo better way? so that it is always in rango 0.1 - 1
-        return (double)this.masteredCount/10;
+        if(masteredCount < 0) return 0;
+        else return (double)this.masteredCount/10;
     }
 
     public void increaseMasteredCount(int i){

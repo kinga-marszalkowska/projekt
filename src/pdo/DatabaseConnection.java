@@ -44,6 +44,148 @@ public class DatabaseConnection {
 
     }
 
+        public static ArrayList<KanaProgress> getKanasForChallengeFromDB() throws SQLException {
+        ArrayList<KanaProgress> result = new ArrayList<>();
+        String selectSQL = String.format("SELECT * FROM %s WHERE %s < %s and %s < %d",
+                TABLE_NAME, MASTERED_COUNT_COLUMN, PRACTICE_COUNT_COLUMN, MASTERED_COUNT_COLUMN, KanaProgress.getMasteryCount());
+            System.out.println(selectSQL);
+        Connection connection = DriverManager.getConnection(CONN);
+
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        try (connection; preparedStatement; resultSet) {
+            while (resultSet.next()) {
+                KanaProgress kanaProgress = new KanaProgress(
+                        resultSet.getString(KANA_COLUMN),
+                        resultSet.getString(ROMANJI_COLUMN),
+                        resultSet.getInt(REPETITIONS_COUNT_COLUMN),
+                        resultSet.getInt(DONT_KNOW_COUNT_COLUMN),
+                        resultSet.getInt(PRACTICE_COUNT_COLUMN),
+                        resultSet.getInt(MASTERED_COUNT_COLUMN)
+                );
+                result.add(kanaProgress);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    public static ArrayList<KanaProgress> getKanasForTrainingFromDB() throws SQLException {
+        ArrayList<KanaProgress> result = new ArrayList<>();
+        String selectSQL = String.format("SELECT * FROM %s WHERE %s = (SELECT MIN(%s) FROM %s) ORDER BY %s DESC;",
+                TABLE_NAME, MASTERED_COUNT_COLUMN,
+                MASTERED_COUNT_COLUMN, TABLE_NAME,
+                DONT_KNOW_COUNT_COLUMN);
+        Connection connection = DriverManager.getConnection(CONN);
+
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        try (connection; preparedStatement; resultSet) {
+            while (resultSet.next()) {
+                KanaProgress kanaProgress = new KanaProgress(
+                        resultSet.getString(KANA_COLUMN),
+                        resultSet.getString(ROMANJI_COLUMN),
+                        resultSet.getInt(REPETITIONS_COUNT_COLUMN),
+                        resultSet.getInt(DONT_KNOW_COUNT_COLUMN),
+                        resultSet.getInt(PRACTICE_COUNT_COLUMN),
+                        resultSet.getInt(MASTERED_COUNT_COLUMN)
+                );
+                result.add(kanaProgress);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+
+
+//    public static ArrayList<KanaProgress> getKanasToPracticeFromDB() throws SQLException {
+//        ArrayList<KanaProgress> result = new ArrayList<>();
+//        String selectSQL = String.format("SELECT * FROM %s WHERE %s > 0",TABLE_NAME, PRACTICE_COUNT_COLUMN);
+//        Connection connection = DriverManager.getConnection(CONN);
+//
+//        PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+//        ResultSet resultSet = preparedStatement.executeQuery();
+//
+//        try (connection; preparedStatement; resultSet) {
+//            while (resultSet.next()) {
+//                KanaProgress kanaProgress = new KanaProgress(
+//                        resultSet.getString(KANA_COLUMN),
+//                        resultSet.getString(ROMANJI_COLUMN),
+//                        resultSet.getInt(REPETITIONS_COUNT_COLUMN),
+//                        resultSet.getInt(DONT_KNOW_COUNT_COLUMN),
+//                        resultSet.getInt(PRACTICE_COUNT_COLUMN),
+//                        resultSet.getInt(MASTERED_COUNT_COLUMN)
+//                );
+//                result.add(kanaProgress);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//
+//    }
+//
+//    public static ArrayList<KanaProgress> getKanasDontKnowFromDB() throws SQLException {
+//        ArrayList<KanaProgress> result = new ArrayList<>();
+//        String selectSQL = String.format("SELECT * FROM %s WHERE %s > 0",TABLE_NAME, DONT_KNOW_COUNT_COLUMN);
+//        Connection connection = DriverManager.getConnection(CONN);
+//
+//        PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+//        ResultSet resultSet = preparedStatement.executeQuery();
+//
+//        try (connection; preparedStatement; resultSet) {
+//            while (resultSet.next()) {
+//                KanaProgress kanaProgress = new KanaProgress(
+//                        resultSet.getString(KANA_COLUMN),
+//                        resultSet.getString(ROMANJI_COLUMN),
+//                        resultSet.getInt(REPETITIONS_COUNT_COLUMN),
+//                        resultSet.getInt(DONT_KNOW_COUNT_COLUMN),
+//                        resultSet.getInt(PRACTICE_COUNT_COLUMN),
+//                        resultSet.getInt(MASTERED_COUNT_COLUMN)
+//                );
+//                result.add(kanaProgress);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//
+//    }
+//
+//    public static ArrayList<KanaProgress> getRepeatedKanasFromDB() throws SQLException {
+//        ArrayList<KanaProgress> result = new ArrayList<>();
+//        String selectSQL = String.format("SELECT * FROM %s WHERE %s > 0",TABLE_NAME, REPETITIONS_COUNT_COLUMN);
+//        Connection connection = DriverManager.getConnection(CONN);
+//
+//        PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+//        ResultSet resultSet = preparedStatement.executeQuery();
+//
+//        try (connection; preparedStatement; resultSet) {
+//            while (resultSet.next()) {
+//                KanaProgress kanaProgress = new KanaProgress(
+//                        resultSet.getString(KANA_COLUMN),
+//                        resultSet.getString(ROMANJI_COLUMN),
+//                        resultSet.getInt(REPETITIONS_COUNT_COLUMN),
+//                        resultSet.getInt(DONT_KNOW_COUNT_COLUMN),
+//                        resultSet.getInt(PRACTICE_COUNT_COLUMN),
+//                        resultSet.getInt(MASTERED_COUNT_COLUMN)
+//                );
+//                result.add(kanaProgress);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//
+//    }
+
     public static void saveKanaToDB(KanaProgress kanaProgress) throws SQLException {
         String insertSQL = String.format("INSERT INTO %s VALUES (?, ?, ?, ?, ?, ?)", TABLE_NAME);
         Connection connection = DriverManager.getConnection(CONN);

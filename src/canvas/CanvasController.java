@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,7 +18,6 @@ import javafx.stage.Stage;
 import models.Brush;
 import models.KanaProgress;
 import models.Pen;
-import pdo.DatabaseConnection;
 import pdo.ReadWriteCsv;
 import services.DBCommunication;
 import statistics.Statistics;
@@ -26,18 +26,19 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.*;
 
 public class CanvasController implements Initializable, DBCommunication, ReadWriteCsv {
+    public Label kanaLabel;
+    public ButtonBar thnkingFaceButton;
     @FXML
-    private Canvas canvas;
+    private Canvas mainCanvas;
     @FXML
     private HBox progressHbox;
 
     private GraphicsContext graphicsContext;
     private static final int ROUNDS_COUNT = 5;
-    private static int currentRound = 0;
+    private static int currentRound;
     private static String[] morae;
 
     private static ArrayList<KanaProgress> currentSet;
@@ -45,10 +46,14 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        currentRound = 0;
         all = readKanas();
-        graphicsContext = canvas.getGraphicsContext2D();
+        graphicsContext = mainCanvas.getGraphicsContext2D();
         currentSet = new ArrayList<>();
-        morae = chooseMoraeChallenge();
+        //todo training / challenge
+        if(canvas.Canvas.getMode().equals("training")){
+            morae = chooseMoraeTraining();
+        } else morae = chooseMoraeChallenge();
         drawTrainingProgressHBox(morae);
     }
 
@@ -76,39 +81,50 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
     }
 
     private String[] chooseMoraeChallenge(){
-        // get kanas that are were marked practice or have > 0 practice count
+        // mastered < practice && mastered < MASTERY
+        ArrayList<KanaProgress> challengeKanas = getKanasForChallenge(ROUNDS_COUNT);
+        System.out.println(challengeKanas);
         String[] result = new String[ROUNDS_COUNT];
 
-        Random rand = new Random();
-        for (int i = 0; i < ROUNDS_COUNT; i++) {
-            KanaProgress kanaProgress = all.get(rand.nextInt(all.size()));
-            currentSet.add(kanaProgress);
-            result[i] = String.format("%s (%s)",kanaProgress.getMora(), kanaProgress.getRomanji());
+        currentSet.addAll(challengeKanas);
+
+        for (int i = 0; i < challengeKanas.size(); i++) {
+            String mora = challengeKanas.get(i).getMora();
+            for (int j = 0; j < mora.length(); j++) {
+                Character.UnicodeBlock b = Character.UnicodeBlock.of(mora.charAt(j));
+                if (b == Character.UnicodeBlock.HIRAGANA) result[i] = String.format("%s (hiragana)", challengeKanas.get(i).getRomanji());
+                if (b == Character.UnicodeBlock.KATAKANA) result[i] = String.format("%s (katakana)", challengeKanas.get(i).getRomanji());
+            }
+
         }
         return result;
     }
     private String[] chooseMoraeTraining(){
-        // get kanas that are marked dont know or have 0 practice count
-        Map<String, String> map = readCsvConvertToMap();
-        List<String> keys = new ArrayList<>(map.keySet());
+        // najmniejszy progress
+
+        // get kanas that are marked dont know then ones that have 0 practice count
+        // String.format("%s (%s)", challengeKanas.get(i).getMora(), challengeKanas.get(i).getRomanji()
+        ArrayList<KanaProgress> trainingKanas = getKanasForTraining(ROUNDS_COUNT);
+        System.out.println(trainingKanas);
         String[] result = new String[ROUNDS_COUNT];
 
-        Random rand = new Random();
-        for (int i = 0; i < ROUNDS_COUNT; i++) {
-            String key = keys.get(rand.nextInt(keys.size()));
-            result[i] = key;
-//            for (int j = 0; j < key.length(); j++) {
-//                Character.UnicodeBlock b = Character.UnicodeBlock.of(key.charAt(j));
-//
-//                if (b == Character.UnicodeBlock.HIRAGANA) System.out.println(" hiragana");
-//                if (b == Character.UnicodeBlock.KATAKANA) System.out.println(" katakana");
-//            }
+        currentSet.addAll(trainingKanas);
+
+        for (int i = 0; i < trainingKanas.size(); i++) {
+            String mora = trainingKanas.get(i).getMora();
+            for (int j = 0; j < mora.length(); j++) {
+                Character.UnicodeBlock b = Character.UnicodeBlock.of(mora.charAt(j));
+                if (b == Character.UnicodeBlock.HIRAGANA) result[i] = String.format("%s (%s)", trainingKanas.get(i).getMora(), trainingKanas.get(i).getRomanji());
+                if (b == Character.UnicodeBlock.KATAKANA) result[i] = String.format("%s (%s)", trainingKanas.get(i).getMora(), trainingKanas.get(i).getRomanji());
+            }
+
         }
         return result;
     }
 
     public void needPractice(){
         if(currentRound < ROUNDS_COUNT) {
+            System.out.println(currentSet.get(currentRound).getRomanji());
             currentSet.get(currentRound).increasePracticeCount(1);
             currentSet.get(currentRound).increaseRepetitionsCount(1);
             updateKana(currentSet.get(currentRound));
@@ -128,7 +144,9 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
     }
     public void dontKnow() {
         if(currentRound < ROUNDS_COUNT) {
+            System.out.println(currentSet.get(currentRound).getRomanji());
             currentSet.get(currentRound).increaseDontKnowCount(1);
+            currentSet.get(currentRound).increaseMasteredCount(-1);
             currentSet.get(currentRound).increaseRepetitionsCount(1);
             updateKana(currentSet.get(currentRound));
             nextRound();
@@ -140,9 +158,10 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
         if(currentRound == ROUNDS_COUNT){
             // todo show another screen with results
         }else{
+            kanaLabel.setText("");
             currentRound++;
             progressHbox.getChildren().clear();
-            graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            graphicsContext.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
             drawTrainingProgressHBox(morae);
         }
 
@@ -151,26 +170,26 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
     public void changeToPen(MouseEvent mouseEvent) {
         Pen.configureGraphicsContext(graphicsContext);
         // remove brush event handlers
-        canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, e -> Brush.handleMouseDragged(graphicsContext, e));
-        canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, e -> Brush.handleMousePressed(graphicsContext, e));
-        canvas.removeEventHandler(MouseEvent.MOUSE_RELEASED, e -> Brush.handleMouseReleased(graphicsContext, e));
+        mainCanvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {});
+        mainCanvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, event -> {});
+        mainCanvas.removeEventHandler(MouseEvent.MOUSE_RELEASED, event -> {});
         // add pen event handlers
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> Pen.handleMouseDragged(graphicsContext, e));
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> Pen.handleMousePressed(graphicsContext, e));
-        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> Pen.handleMouseReleased(graphicsContext, e));
+        mainCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> Pen.handleMouseDragged(graphicsContext, e));
+        mainCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> Pen.handleMousePressed(graphicsContext, e));
+        mainCanvas.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> Pen.handleMouseReleased(graphicsContext, e));
 
     }
 
     public void changeToBrush(MouseEvent mouseEvent) {
         System.out.println("brush");
         // remove pen event handlers
-        canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, e -> Pen.handleMouseDragged(graphicsContext, e));
-        canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, e -> Pen.handleMousePressed(graphicsContext, e));
-        canvas.removeEventHandler(MouseEvent.MOUSE_RELEASED, e -> Pen.handleMouseReleased(graphicsContext, e));
+        mainCanvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {});
+        mainCanvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, event -> {});
+        mainCanvas.removeEventHandler(MouseEvent.MOUSE_RELEASED, event -> {});
         // add brush event handlers
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> Brush.handleMouseDragged(graphicsContext, e));
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> Brush.handleMousePressed(graphicsContext, e));
-        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> Brush.handleMouseReleased(graphicsContext, e));
+        mainCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> Brush.handleMouseDragged(graphicsContext, e));
+        mainCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> Brush.handleMousePressed(graphicsContext, e));
+        mainCanvas.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> Brush.handleMouseReleased(graphicsContext, e));
     }
 
     public void goBackToStatisticsScreen(MouseEvent mouseEvent) throws IOException {
@@ -181,5 +200,9 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    public void showKana(MouseEvent mouseEvent) {
+        kanaLabel.setText(currentSet.get(currentRound).getMora());
     }
 }
