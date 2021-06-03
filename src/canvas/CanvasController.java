@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import models.Brush;
 import models.KanaProgress;
+import models.LearningMode;
 import models.Pen;
 import pdo.ReadWriteCsv;
 import services.DBCommunication;
@@ -51,7 +52,7 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
         graphicsContext = mainCanvas.getGraphicsContext2D();
         currentSet = new ArrayList<>();
         //todo training / challenge
-        if(canvas.Canvas.getMode().equals("training")){
+        if(canvas.Canvas.getMode().equals(LearningMode.TRAINING)){
             morae = chooseMoraeTraining();
         } else morae = chooseMoraeChallenge();
         drawTrainingProgressHBox(morae);
