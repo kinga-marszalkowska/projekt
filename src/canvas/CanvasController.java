@@ -20,6 +20,7 @@ import models.KanaProgress;
 import models.LearningMode;
 import models.Pen;
 import pdo.ReadWriteCsv;
+import roundResults.RoundResults;
 import services.DBCommunication;
 import statistics.Statistics;
 
@@ -40,6 +41,7 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
     private GraphicsContext graphicsContext;
     private static final int ROUNDS_COUNT = 5;
     private static int currentRound;
+    private static int masteredThisRound = 0;
     private static String[] morae;
 
     private static ArrayList<KanaProgress> currentSet;
@@ -140,6 +142,7 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
             currentSet.get(currentRound).increaseRepetitionsCount(1);
             updateKana(currentSet.get(currentRound));
             nextRound();
+            masteredThisRound++;
         }
         System.out.println("mastered");
     }
@@ -155,9 +158,17 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
         System.out.println("idk");
     }
 
-    public void nextRound(){
-        if(currentRound == ROUNDS_COUNT){
+    private void nextRound(){
+        System.out.println(currentRound);
+        if(currentRound == ROUNDS_COUNT - 1){
             // todo show another screen with results
+            setMasteredCount();
+            try {
+                goToRoundResultsScreen();
+            } catch (IOException e) {
+                System.out.println("Cannot display round results screen");
+            }
+
         }else{
             kanaLabel.setText("");
             currentRound++;
@@ -200,10 +211,22 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
         Scene scene = new Scene(anchorPane);
         stage.setScene(scene);
         stage.show();
+    }
 
+    public void goToRoundResultsScreen() throws IOException {
+        Stage stage = Statistics.getMainAppStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../roundResults/roundResults.fxml"));
+        AnchorPane anchorPane = loader.load();
+        Scene scene = new Scene(anchorPane);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void showKana(MouseEvent mouseEvent) {
         kanaLabel.setText(currentSet.get(currentRound).getMora());
+    }
+
+    public void setMasteredCount(){
+        RoundResults.setMasteredThisRound(masteredThisRound);
     }
 }

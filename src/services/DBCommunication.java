@@ -25,6 +25,7 @@ public interface DBCommunication {
             return DatabaseConnection.getKanasFromDB();
         } catch (SQLException e) {
             System.out.println("Coulnd't read kanas");
+            System.out.println(e);
             return null;
         }
     }
