@@ -117,6 +117,16 @@ public class StatisticsController implements Initializable, DBCommunication {
         stage.show();
     }
 
+    public void goToDojoScreen(MouseEvent mouseEvent) throws IOException {
+        Stage stage = Statistics.getMainAppStage();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../dojo/dojo.fxml"));
+        AnchorPane anchorPane = loader.load();
+        Scene scene = new Scene(anchorPane);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 
     public void setTrainingMode(ActionEvent actionEvent) {
         Canvas.setMode(LearningMode.TRAINING);

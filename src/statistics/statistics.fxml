@@ -17,12 +17,12 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="statistics.StatisticsController">
    <children>
       <StackPane prefHeight="400.0" prefWidth="600.0" />
-      <ImageView fitHeight="439.0" fitWidth="600.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="600.0" fitWidth="850.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/waves.jpg" />
          </image>
       </ImageView>
-      <BorderPane prefHeight="434.0" prefWidth="600.0">
+      <BorderPane layoutX="7.0" layoutY="14.0" prefHeight="563.0" prefWidth="816.0">
          <left>
             <ButtonBar fx:id="back_arrow_button" onMouseClicked="#showPrevChars" prefHeight="434.0" prefWidth="24.0" BorderPane.alignment="CENTER">
                <buttons>
@@ -77,6 +77,7 @@
                <children>
                   <Button fx:id="trainingButton" mnemonicParsing="false" onAction="#setTrainingMode" onMouseClicked="#goToCanvasScreen" text="training" />
                   <Button fx:id="challengeButton" mnemonicParsing="false" onAction="#setChallengeMode" onMouseClicked="#goToCanvasScreen" text="challenge" textAlignment="CENTER" />
+                  <Button fx:id="goToDojoScreen" mnemonicParsing="false" onMouseClicked="#goToDojoScreen" text="word dojo" />
                </children>
                <opaqueInsets>
                   <Insets />
