@@ -41,6 +41,7 @@ public class CanvasController implements Initializable, DBCommunication, ReadWri
     private GraphicsContext graphicsContext;
     private static final int ROUNDS_COUNT = 5;
     private static int currentRound;
+    //todo incorrect count, always 1 too few
     private static int masteredThisRound = 0;
     private static String[] morae;
 
