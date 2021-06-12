@@ -3,8 +3,6 @@ package services;
 import models.KanaProgress;
 import pdo.DatabaseConnection;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.*;
 

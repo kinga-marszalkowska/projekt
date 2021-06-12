@@ -48,7 +48,6 @@ public class DatabaseConnection {
         ArrayList<KanaProgress> result = new ArrayList<>();
         String selectSQL = String.format("SELECT * FROM %s WHERE %s < %s and %s < %d",
                 TABLE_NAME, MASTERED_COUNT_COLUMN, PRACTICE_COUNT_COLUMN, MASTERED_COUNT_COLUMN, KanaProgress.getMasteryCount());
-            System.out.println(selectSQL);
         Connection connection = DriverManager.getConnection(CONN);
 
         PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
