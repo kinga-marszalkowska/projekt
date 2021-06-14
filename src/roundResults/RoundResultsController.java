@@ -29,7 +29,6 @@ public class RoundResultsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         int masteredCount = RoundResults.getMasteredThisRound();
 
-        //todo mastered cound not displaying on label
         if(masteredCount > 0) label.setText(""+masteredCount);
 
         File file = new File(String.format("src\\assets\\%s.png", masteredCount));

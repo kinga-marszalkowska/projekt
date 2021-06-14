@@ -23,8 +23,6 @@ import models.Pen;
 import roundResults.RoundResults;
 import services.DBCommunication;
 import statistics.Statistics;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,20 +42,20 @@ public class CanvasController implements Initializable, DBCommunication {
     private HBox progressHbox;
 
     private GraphicsContext graphicsContext;
+
     private static final int ROUNDS_COUNT = 5;
     private static int currentRound;
     private static int masteredThisRound = 0;
     private static String[] morae;
-
     private static ArrayList<KanaProgress> currentSet;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         currentRound = 0;
         masteredThisRound = 0;
-        ArrayList<KanaProgress> all = readKanas();
         graphicsContext = mainCanvas.getGraphicsContext2D();
         currentSet = new ArrayList<>();
+
         if(canvas.Canvas.getMode().equals(LearningMode.TRAINING)){
             morae = chooseMoraeTraining();
             // disables hints - not needed in training mode
@@ -69,6 +67,7 @@ public class CanvasController implements Initializable, DBCommunication {
     }
 
     private void drawTrainingProgressHBox(String[] morae){
+        // draw dots to show how many rounds are left - current round shows current kana
         progressHbox.setSpacing(20);
         for (int i = 0; i < ROUNDS_COUNT; i++) {
             if(i == currentRound){
@@ -89,7 +88,6 @@ public class CanvasController implements Initializable, DBCommunication {
                 }
             }
 
-
         }
 
     }
@@ -105,6 +103,7 @@ public class CanvasController implements Initializable, DBCommunication {
             String mora = challengeKanas.get(i).getMora();
             for (int j = 0; j < mora.length(); j++) {
                 Character.UnicodeBlock b = Character.UnicodeBlock.of(mora.charAt(j));
+                // notify user which alphabet should a char be drawn in (same chars in hiragana & katakana)
                 if (b == Character.UnicodeBlock.HIRAGANA) result[i] = String.format("%s (hiragana)", challengeKanas.get(i).getRomanji());
                 if (b == Character.UnicodeBlock.KATAKANA) result[i] = String.format("%s (katakana)", challengeKanas.get(i).getRomanji());
             }
@@ -119,12 +118,7 @@ public class CanvasController implements Initializable, DBCommunication {
         currentSet.addAll(trainingKanas);
 
         for (int i = 0; i < trainingKanas.size(); i++) {
-            String mora = trainingKanas.get(i).getMora();
-            for (int j = 0; j < mora.length(); j++) {
-                Character.UnicodeBlock b = Character.UnicodeBlock.of(mora.charAt(j));
-                if (b == Character.UnicodeBlock.HIRAGANA) result[i] = String.format("%s (%s)", trainingKanas.get(i).getMora(), trainingKanas.get(i).getRomanji());
-                if (b == Character.UnicodeBlock.KATAKANA) result[i] = String.format("%s (%s)", trainingKanas.get(i).getMora(), trainingKanas.get(i).getRomanji());
-            }
+            result[i] = String.format("%s (%s)", trainingKanas.get(i).getMora(), trainingKanas.get(i).getRomanji());
 
         }
         return result;
@@ -177,6 +171,19 @@ public class CanvasController implements Initializable, DBCommunication {
 
     }
 
+    public void showKana(MouseEvent mouseEvent) {
+        kanaLabel.setText(currentSet.get(currentRound).getMora());
+        kanaLabel.setFont(new Font(24));
+    }
+
+    public void setMasteredCount(){
+        RoundResults.setMasteredThisRound(masteredThisRound);
+    }
+
+    public void clearCanvas(MouseEvent mouseEvent) {
+        graphicsContext.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
+    }
+
     public void changeToPen(MouseEvent mouseEvent) {
         Pen.configureGraphicsContext(graphicsContext);
         // remove brush event handlers
@@ -218,18 +225,5 @@ public class CanvasController implements Initializable, DBCommunication {
         Scene scene = new Scene(anchorPane);
         stage.setScene(scene);
         stage.show();
-    }
-
-    public void showKana(MouseEvent mouseEvent) {
-        kanaLabel.setText(currentSet.get(currentRound).getMora());
-        kanaLabel.setFont(new Font(24));
-    }
-
-    public void setMasteredCount(){
-        RoundResults.setMasteredThisRound(masteredThisRound);
-    }
-
-    public void clearCanvas(MouseEvent mouseEvent) {
-        graphicsContext.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
 }

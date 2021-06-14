@@ -10,6 +10,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dojo.DojoController">
@@ -42,16 +43,24 @@
             <Canvas fx:id="dojoCanvas" height="368.0" width="517.0" />
          </children>
       </StackPane>
-      <Label fx:id="reading" alignment="CENTER" layoutX="174.0" layoutY="52.0" prefHeight="56.0" prefWidth="510.0" text="がっこう">
-         <font>
-            <Font size="39.0" />
-         </font>
-      </Label>
-      <Label fx:id="word" alignment="CENTER" layoutX="174.0" layoutY="109.0" prefHeight="46.0" prefWidth="517.0" text="学校">
-         <font>
-            <Font size="30.0" />
-         </font>
-      </Label>
+      <VBox fx:id="topVBox" layoutX="174.0" layoutY="52.0">
+         <children>
+            <Label fx:id="reading" alignment="CENTER" prefHeight="56.0" prefWidth="510.0" text="がっこう">
+               <font>
+                  <Font size="39.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <VBox fx:id="bottomVbox" layoutX="174.0" layoutY="109.0">
+         <children>
+            <Label fx:id="word" alignment="CENTER" prefHeight="46.0" prefWidth="517.0" text="学校">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
       <StackPane layoutX="786.0" layoutY="12.0">
          <children>
             <ImageView fitHeight="95.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">

@@ -30,10 +30,8 @@ public class StatisticsController implements Initializable, DBCommunication {
 
     private ArrayList<KanaProgress> all;
 
-    /**
-     * all kanas are divided into multiple pages that they can be browsed by clicking navigation arrows
-     * kanaPageNumber keeps track of which page should be displayed
-     * */
+    // all kanas are divided into multiple pages that they can be browsed by clicking navigation arrows
+    // kanaPageNumber keeps track of which page should be displayed
     private int moraPageNumber = 0;
 
     @Override
@@ -43,14 +41,14 @@ public class StatisticsController implements Initializable, DBCommunication {
     }
 
     private void fillGridpaneWithElements(){
+         /*
+           Use stream to skip first n characters
+          ex. if on page 0 - no elements will be skipped,
+              if on page 1 - first {size} elements will be skipped
+          */
         int size = charsGridpane.getColumnCount() * charsGridpane.getRowCount();
-
-         /** Use stream to skip first n characters
-         * ex. if on page 0 - no elements will be skipped,
-         *     if on page 1 - first {size} elements will be skipped
-         * */
-
         Object[] charsForCurrentPage = all.stream().skip(moraPageNumber *size).toArray();
+
         // if no elements are left to display, come back to page no.0
         if(charsForCurrentPage.length == 0) {
             moraPageNumber = 0;
@@ -91,12 +89,14 @@ public class StatisticsController implements Initializable, DBCommunication {
                         new Insets(5,10,5,10))));
         Label japaneseCharLabel = new Label(japaneseChar.getMora());
         japaneseCharLabel.setFont(new Font("System", 30));
+
         Label romanjiCharLabel = new Label(japaneseChar.getRomanji());
         romanjiCharLabel.setFont(new Font("System", 20));
+
         ProgressBar progressBar = new ProgressBar(japaneseChar.getProgress());
         progressBar.setPrefSize(70, 12);
-        vBox.getChildren().addAll(japaneseCharLabel, romanjiCharLabel, progressBar);
 
+        vBox.getChildren().addAll(japaneseCharLabel, romanjiCharLabel, progressBar);
         charsGridpane.add(vBox, row, column);
     }
 

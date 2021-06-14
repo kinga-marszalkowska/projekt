@@ -1,13 +1,12 @@
 package dojo;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,8 +14,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import models.JishoResponseModel;
@@ -35,6 +34,8 @@ public class DojoController implements Initializable {
     public Label level;
     @FXML
     public ComboBox levelComboBox;
+    public VBox topVBox;
+    public VBox bottomVbox;
     @FXML
     private Slider fontSizeSlider;
     @FXML
@@ -60,17 +61,16 @@ public class DojoController implements Initializable {
         promptTextShowed = 0;
         fontSizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> promptText.setFont(new Font(fontSizeSlider.getValue())));
         levelComboBox.getItems().addAll(LEVELS);
-    }
 
-    public void goBackToStatisticsScreen(MouseEvent mouseEvent) throws IOException {
-        Stage stage = Statistics.getMainAppStage();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../statistics/statistics.fxml"));
-        AnchorPane anchorPane = loader.load();
-        Scene scene = new Scene(anchorPane);
-        stage.setScene(scene);
-        stage.show();
-    }
+        for (VBox vBox : new VBox[]{topVBox, bottomVbox}) {
+            vBox.setBackground(
+                    new Background(
+                            new BackgroundFill(Color.rgb(250, 250, 250, 0.8),
+                                    new CornerRadii(15),
+                                    new Insets(5,10,5,10))));
+        }
 
+    }
 
     public void showKanasOnCanvas(MouseEvent mouseEvent) {
         if(currentModel != null){
@@ -151,5 +151,14 @@ public class DojoController implements Initializable {
         JishoResponseModel.setLevel(levelComboBox.getValue().toString());
         JishoResponseModel.setJishoModelArrayList(JishoResponseModel.getWords(JishoResponseModel.getUrl() + JishoResponseModel.getLevel()));
         selectRandomWord(null);
+    }
+
+    public void goBackToStatisticsScreen(MouseEvent mouseEvent) throws IOException {
+        Stage stage = Statistics.getMainAppStage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../statistics/statistics.fxml"));
+        AnchorPane anchorPane = loader.load();
+        Scene scene = new Scene(anchorPane);
+        stage.setScene(scene);
+        stage.show();
     }
 }
