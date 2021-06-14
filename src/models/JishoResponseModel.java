@@ -8,15 +8,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class JishoModel {
-    private static ArrayList<JishoModel> jishoModelArrayList = getWords();
+public class JishoResponseModel {
+    private static ArrayList<JishoResponseModel> jishoModelArrayList = getWords();
     private ArrayList<String> nLevel;
     private String reading;
     private String word;
     private ArrayList<String> englishDefinition;
     private ArrayList<String> partsOfSpeech;
 
-    public JishoModel(ArrayList<String> nLevel, String reading, String word, ArrayList<String> englishDefinition, ArrayList<String> partsOfSpeech) {
+    public JishoResponseModel(ArrayList<String> nLevel, String reading, String word, ArrayList<String> englishDefinition, ArrayList<String> partsOfSpeech) {
         this.nLevel = nLevel;
         this.reading = reading;
         this.word = word;
@@ -24,12 +24,12 @@ public class JishoModel {
         this.partsOfSpeech = partsOfSpeech;
     }
 
-    public static ArrayList<JishoModel> getJishoModelArrayList() {
+    public static ArrayList<JishoResponseModel> getJishoModelArrayList() {
         return jishoModelArrayList;
     }
 
-    public static void setJishoModelArrayList(ArrayList<JishoModel> jishoModelArrayList) {
-        JishoModel.jishoModelArrayList = jishoModelArrayList;
+    public static void setJishoModelArrayList(ArrayList<JishoResponseModel> jishoModelArrayList) {
+        JishoResponseModel.jishoModelArrayList = jishoModelArrayList;
     }
 
     public ArrayList<String> getnLevel() {
@@ -72,8 +72,8 @@ public class JishoModel {
         this.partsOfSpeech = partsOfSpeech;
     }
 
-    public static ArrayList<JishoModel> getWords(){
-        ArrayList<JishoModel> jishoModelArrayList = new ArrayList<>();
+    public static ArrayList<JishoResponseModel> getWords(){
+        ArrayList<JishoResponseModel> jishoModelArrayList = new ArrayList<>();
         try(java.io.InputStream is = new URL("https://jisho.org/api/v1/search/words?keyword=%23jlpt-n5").openStream()) {
 
             String contents = new String(is.readAllBytes());
@@ -110,7 +110,7 @@ public class JishoModel {
                     partsOfSpeechArrayList.add((String) key);
                 }
 
-                jishoModelArrayList.add(new JishoModel(levels, reading, word, englishDefArrayList, partsOfSpeechArrayList));
+                jishoModelArrayList.add(new JishoResponseModel(levels, reading, word, englishDefArrayList, partsOfSpeechArrayList));
 
             }
 

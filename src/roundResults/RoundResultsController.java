@@ -23,14 +23,18 @@ import java.util.ResourceBundle;
 public class RoundResultsController implements Initializable {
 
     public ImageView image;
-    public Label label = new Label();
+    public Label label;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        label.setText(""+RoundResults.getMasteredThisRound());
-        System.out.println("mastered: "+RoundResults.getMasteredThisRound());
-        File file = new File("D:\\PJATK\\POJ\\lab11-copy\\src\\assets\\cat_salad.jpg");
+        int masteredCount = RoundResults.getMasteredThisRound();
+
+        //todo mastered cound not displaying on label
+        if(masteredCount > 0) label.setText(""+masteredCount);
+
+        File file = new File(String.format("src\\assets\\%s.png", masteredCount));
         Image img = new Image(file.toURI().toString());
+
         image.setImage(img);
 
     }

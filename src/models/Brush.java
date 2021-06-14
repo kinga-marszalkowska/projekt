@@ -16,7 +16,7 @@ public abstract class Brush {
     private static double currentOpacity = START_OPACITY;
     private static final double STROKE_WIDTH = 10;
 
-    private static void configureGraphicsContext(GraphicsContext gc) {
+    public static void configureGraphicsContext(GraphicsContext gc) {
         gc.setStroke(new Color(color.getRed(), color.getGreen(), color.getBlue(), currentOpacity));
         gc.setLineWidth(10);
         gc.setLineCap(StrokeLineCap.ROUND);

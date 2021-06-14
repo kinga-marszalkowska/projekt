@@ -114,10 +114,6 @@ public class CanvasController implements Initializable, DBCommunication {
         return result;
     }
     private String[] chooseMoraeTraining(){
-        // najmniejszy progress
-
-        // get kanas that are marked dont know then ones that have 0 practice count
-        // String.format("%s (%s)", challengeKanas.get(i).getMora(), challengeKanas.get(i).getRomanji()
         ArrayList<KanaProgress> trainingKanas = getKanasForTraining(ROUNDS_COUNT);
         String[] result = new String[ROUNDS_COUNT];
 
@@ -163,7 +159,6 @@ public class CanvasController implements Initializable, DBCommunication {
             updateKana(currentSet.get(currentRound));
             nextRound();
         }
-        System.out.println("idk");
     }
 
     private void nextRound(){
@@ -171,7 +166,6 @@ public class CanvasController implements Initializable, DBCommunication {
         if(currentRound == ROUNDS_COUNT - 1){
             setMasteredCount();
             try {
-                // todo choose different images depending on mastered count
                 goToRoundResultsScreen();
             } catch (IOException e) {
                 System.out.println("Cannot display round results screen");
@@ -201,7 +195,7 @@ public class CanvasController implements Initializable, DBCommunication {
     }
 
     public void changeToBrush(MouseEvent mouseEvent) {
-        System.out.println("brush");
+        Brush.configureGraphicsContext(graphicsContext);
         // remove pen event handlers
         mainCanvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {});
         mainCanvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, event -> {});

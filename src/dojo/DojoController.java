@@ -1,15 +1,23 @@
 package dojo;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import models.JishoModel;
+import models.JishoResponseModel;
+import models.Pen;
 import statistics.Statistics;
 
 import java.io.IOException;
@@ -22,9 +30,9 @@ public class DojoController implements Initializable {
     @FXML
     public Label level;
     @FXML
-    private Label partsOfSpeech;
+    private Slider fontSizeSlider;
     @FXML
-    private Label englishDefinition;
+    private Canvas dojoCanvas;
     @FXML
     private Label promptText;
     @FXML
@@ -33,11 +41,18 @@ public class DojoController implements Initializable {
     private Label word;
 
     private int promptTextShowed;
+    private GraphicsContext dojoGraphicsContext;
+    private boolean isTranslateSelected = false;
+    //todo default jisho model
+    private JishoResponseModel currentModel;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println(JishoModel.getJishoModelArrayList());
+        dojoGraphicsContext = dojoCanvas.getGraphicsContext2D();
+        setPen();
         promptTextShowed = 0;
+        fontSizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> promptText.setFont(new Font(fontSizeSlider.getValue())));
 
     }
 
@@ -54,11 +69,11 @@ public class DojoController implements Initializable {
     public void showKanasOnCanvas(MouseEvent mouseEvent) {
         switch (promptTextShowed){
             case 0:{
-                promptText.setText(reading.getText());
+                promptText.setText(currentModel.getReading());
                 promptTextShowed++;
             } break;
             case 1: {
-                promptText.setText(word.getText());
+                promptText.setText(currentModel.getWord());
                 promptTextShowed++;
             } break;
             case 2: {
@@ -71,13 +86,50 @@ public class DojoController implements Initializable {
     }
 
     public void selectRandomWord(MouseEvent mouseEvent) {
-        ArrayList<JishoModel> jishoModelArrayList = JishoModel.getJishoModelArrayList();
+        ArrayList<JishoResponseModel> jishoModelArrayList = JishoResponseModel.getJishoModelArrayList();
         Random rand = new Random();
-        JishoModel model = jishoModelArrayList.get(rand.nextInt(jishoModelArrayList.size()));
-        partsOfSpeech.setText(model.getPartsOfSpeech().toString());
-        englishDefinition.setText(model.getEnglishDefinition().toString());
-        word.setText(model.getWord());
-        reading.setText(model.getReading());
-        level.setText(model.getnLevel().toString());
+        currentModel = jishoModelArrayList.get(rand.nextInt(jishoModelArrayList.size()));
+
+        setEnglishText();
+
+        String[] levels = currentModel.getnLevel().toString().split(",");
+        StringBuilder displayLevelsString = new StringBuilder();
+        for (String level : levels) {
+            displayLevelsString.append(level.substring(6, 8)).append("\n");
+        }
+        level.setText(displayLevelsString.toString());
     }
+
+    public void setPen(){
+        Pen.configureGraphicsContext(dojoGraphicsContext);
+        dojoCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> Pen.handleMouseDragged(dojoGraphicsContext, e));
+        dojoCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> Pen.handleMousePressed(dojoGraphicsContext, e));
+        dojoCanvas.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> Pen.handleMouseReleased(dojoGraphicsContext, e));
+    }
+
+    public void clearCanvas(MouseEvent mouseEvent) {
+        dojoGraphicsContext.clearRect(0, 0, dojoCanvas.getWidth(), dojoCanvas.getHeight());
+    }
+
+    public void toggleTranslate(MouseEvent mouseEvent) {
+        if(isTranslateSelected)setJapaneseText();
+        else setEnglishText();
+        isTranslateSelected = !isTranslateSelected;
+
+    }
+
+    private void setJapaneseText(){
+        word.setText(currentModel.getWord());
+        word.setFont(new Font(39));
+        reading.setText(currentModel.getReading());
+        reading.setFont(new Font(30));
+    }
+
+    private void setEnglishText(){
+        word.setText(currentModel.getPartsOfSpeech().toString().substring(1, currentModel.getPartsOfSpeech().toString().length() - 1));
+        word.setFont(new Font(16));
+        reading.setText(currentModel.getEnglishDefinition().toString().substring(1, currentModel.getEnglishDefinition().toString().length() - 1));
+        reading.setFont(new Font(15));
+    }
+
 }
