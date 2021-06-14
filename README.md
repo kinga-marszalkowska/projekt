@@ -49,7 +49,9 @@ The user decides if they need more practice on a given character or not. It is a
 
 ## Gallery
 
-
+![screen1](https://user-images.githubusercontent.com/64398325/121964217-7d298580-cd6b-11eb-8032-4e38bea2069b.PNG)
+![screen2](https://user-images.githubusercontent.com/64398325/121964230-8286d000-cd6b-11eb-9972-901032742b06.PNG)
+![screen3](https://user-images.githubusercontent.com/64398325/121964245-874b8400-cd6b-11eb-818b-838e4899c22f.PNG)
 
 
 
