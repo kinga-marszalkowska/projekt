@@ -3,6 +3,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.Image?>
@@ -13,6 +14,11 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dojo.DojoController">
    <children>
+      <ImageView fitHeight="632.0" fitWidth="850.0" opacity="0.6" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/waves.jpg" />
+         </image>
+      </ImageView>
       <ImageView fx:id="back_arrow_canvas_screen" fitHeight="50.0" fitWidth="50.0" layoutX="18.0" layoutY="17.0" onMouseClicked="#goBackToStatisticsScreen" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/back_arrow.png" />
@@ -46,15 +52,25 @@
             <Font size="30.0" />
          </font>
       </Label>
-      <ImageView fitHeight="65.0" fitWidth="37.0" layoutX="718.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../assets/bookmark.png" />
-         </image>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </ImageView>
-      <ImageView fitHeight="69.0" fitWidth="84.0" layoutX="619.0" layoutY="10.0" onMouseClicked="#toggleTranslate" pickOnBounds="true" preserveRatio="true">
+      <StackPane layoutX="786.0" layoutY="12.0">
+         <children>
+            <ImageView fitHeight="95.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/bookmark.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Label fx:id="level" alignment="TOP_CENTER" prefHeight="46.0" prefWidth="38.0" />
+            <ComboBox fx:id="levelComboBox" onAction="#chooseLanguageLevel" opacity="0.0" prefHeight="66.0" prefWidth="21.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ComboBox>
+         </children>
+      </StackPane>
+      <ImageView fitHeight="69.0" fitWidth="84.0" layoutX="686.0" layoutY="20.0" onMouseClicked="#toggleTranslate" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/translate.png" />
          </image>
@@ -62,9 +78,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ImageView>
-      <Label fx:id="level" layoutX="729.0" layoutY="17.0" text="N5" />
-      <Label fx:id="englishDefinition" layoutX="518.0" layoutY="109.0" />
-      <ImageView fx:id="" fitHeight="50.0" fitWidth="28.0" layoutX="770.0" layoutY="29.0" onMouseClicked="#showKanasOnCanvas" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="" fitHeight="25.0" fitWidth="23.0" layoutX="716.0" layoutY="146.0" onMouseClicked="#showKanasOnCanvas" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/dot.png" />
          </image>
@@ -72,7 +86,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ImageView>
-      <ImageView fx:id="random" fitHeight="72.0" fitWidth="72.0" layoutX="75.0" layoutY="164.0" onMouseClicked="#selectRandomWord" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="random" fitHeight="65.0" fitWidth="60.0" layoutX="75.0" layoutY="277.0" onMouseClicked="#selectRandomWord" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/dice.png" />
          </image>
@@ -80,7 +94,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ImageView>
-      <StackPane layoutX="76.0" layoutY="250.0" prefHeight="70.0" prefWidth="70.0">
+      <StackPane layoutX="75.0" layoutY="353.0" prefHeight="70.0" prefWidth="70.0">
          <children>
             <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -90,9 +104,10 @@
             <ButtonBar fx:id="sponge" onMouseClicked="#clearCanvas" prefHeight="40.0" prefWidth="200.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
-               </cursor></ButtonBar>
+               </cursor>
+            </ButtonBar>
          </children>
       </StackPane>
-      <Slider fx:id="fontSizeSlider" layoutX="812.0" min="10.0" max="200.0" orientation="VERTICAL" prefHeight="104.0" prefWidth="14.0" value="10.0" />
+      <Slider fx:id="fontSizeSlider" layoutX="721.0" layoutY="181.0" max="200.0" min="30.0" orientation="VERTICAL" prefHeight="330.0" prefWidth="14.0" value="10.0" />
    </children>
 </AnchorPane>

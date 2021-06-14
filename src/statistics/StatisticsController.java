@@ -5,14 +5,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import models.KanaProgress;
@@ -84,9 +84,15 @@ public class StatisticsController implements Initializable, DBCommunication {
     private void insertElementToGridpane(KanaProgress japaneseChar, int row, int column){
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
+        vBox.setBackground(
+                new Background(
+                new BackgroundFill(Color.rgb(250, 250, 250, 0.8),
+                new CornerRadii(15),
+                        new Insets(5,10,5,10))));
         Label japaneseCharLabel = new Label(japaneseChar.getMora());
-        japaneseCharLabel.setFont(new Font("System", 20));
+        japaneseCharLabel.setFont(new Font("System", 30));
         Label romanjiCharLabel = new Label(japaneseChar.getRomanji());
+        romanjiCharLabel.setFont(new Font("System", 20));
         ProgressBar progressBar = new ProgressBar(japaneseChar.getProgress());
         progressBar.setPrefSize(70, 12);
         vBox.getChildren().addAll(japaneseCharLabel, romanjiCharLabel, progressBar);

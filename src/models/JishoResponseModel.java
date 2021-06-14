@@ -9,7 +9,10 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class JishoResponseModel {
-    private static ArrayList<JishoResponseModel> jishoModelArrayList = getWords();
+    private static String level = "n5";
+    private static String url = "https://jisho.org/api/v1/search/words?keyword=%23jlpt-";
+    private static ArrayList<JishoResponseModel> jishoModelArrayList = getWords(url + level);
+
     private ArrayList<String> nLevel;
     private String reading;
     private String word;
@@ -72,10 +75,25 @@ public class JishoResponseModel {
         this.partsOfSpeech = partsOfSpeech;
     }
 
-    public static ArrayList<JishoResponseModel> getWords(){
-        ArrayList<JishoResponseModel> jishoModelArrayList = new ArrayList<>();
-        try(java.io.InputStream is = new URL("https://jisho.org/api/v1/search/words?keyword=%23jlpt-n5").openStream()) {
+    public static String getLevel() {
+        return level;
+    }
 
+    public static void setLevel(String level) {
+        JishoResponseModel.level = level;
+    }
+
+    public static String getUrl() {
+        return url;
+    }
+
+    public static void setUrl(String url) {
+        JishoResponseModel.url = url;
+    }
+
+    public static ArrayList<JishoResponseModel> getWords(String url){
+        ArrayList<JishoResponseModel> jishoModelArrayList = new ArrayList<>();
+        try(java.io.InputStream is = new URL(url).openStream()) {
             String contents = new String(is.readAllBytes());
             JSONObject object = new JSONObject(contents);
             JSONArray jsonArray = (JSONArray) object.get("data");

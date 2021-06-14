@@ -13,11 +13,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="statistics.StatisticsController">
+<AnchorPane prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="statistics.StatisticsController">
    <children>
-      <StackPane prefHeight="400.0" prefWidth="600.0" />
-      <ImageView fitHeight="600.0" fitWidth="850.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
+      <StackPane prefHeight="600.0" prefWidth="850.0" />
+      <ImageView fitHeight="632.0" fitWidth="850.0" opacity="0.6" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/waves.jpg" />
          </image>
@@ -73,15 +74,27 @@
             </GridPane>
          </center>
          <bottom>
-            <HBox alignment="CENTER" prefHeight="41.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" prefHeight="41.0" prefWidth="600.0" spacing="30.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="trainingButton" mnemonicParsing="false" onAction="#setTrainingMode" onMouseClicked="#goToCanvasScreen" text="training" />
-                  <Button fx:id="challengeButton" mnemonicParsing="false" onAction="#setChallengeMode" onMouseClicked="#goToCanvasScreen" text="challenge" textAlignment="CENTER" />
-                  <Button fx:id="goToDojoScreen" mnemonicParsing="false" onMouseClicked="#goToDojoScreen" text="word dojo" />
+                  <Button fx:id="trainingButton" mnemonicParsing="false" onAction="#setTrainingMode" onMouseClicked="#goToCanvasScreen" text="training">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
+                  <Button fx:id="challengeButton" mnemonicParsing="false" onAction="#setChallengeMode" onMouseClicked="#goToCanvasScreen" text="challenge" textAlignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
+                  <Button fx:id="goToDojoScreen" mnemonicParsing="false" onMouseClicked="#goToDojoScreen" text="word dojo">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
                </children>
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
             </HBox>
          </bottom>
       </BorderPane>

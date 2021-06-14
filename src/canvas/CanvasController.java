@@ -46,7 +46,6 @@ public class CanvasController implements Initializable, DBCommunication {
     private GraphicsContext graphicsContext;
     private static final int ROUNDS_COUNT = 5;
     private static int currentRound;
-    //todo incorrect count, always 1 too few, nie resetuje sie wartosc po kilku treningach -> solved??
     private static int masteredThisRound = 0;
     private static String[] morae;
 
@@ -138,12 +137,10 @@ public class CanvasController implements Initializable, DBCommunication {
             updateKana(currentSet.get(currentRound));
             nextRound();
         }
-        System.out.println("practice");
     }
 
     public void mastered(){
         if(currentRound < ROUNDS_COUNT) {
-            System.out.println("round " + currentRound + "/" + ROUNDS_COUNT);
             masteredThisRound++;
             currentSet.get(currentRound).increaseMasteredCount(1);
             currentSet.get(currentRound).increaseRepetitionsCount(1);
@@ -162,7 +159,6 @@ public class CanvasController implements Initializable, DBCommunication {
     }
 
     private void nextRound(){
-        System.out.println(currentRound);
         if(currentRound == ROUNDS_COUNT - 1){
             setMasteredCount();
             try {
@@ -226,9 +222,14 @@ public class CanvasController implements Initializable, DBCommunication {
 
     public void showKana(MouseEvent mouseEvent) {
         kanaLabel.setText(currentSet.get(currentRound).getMora());
+        kanaLabel.setFont(new Font(24));
     }
 
     public void setMasteredCount(){
         RoundResults.setMasteredThisRound(masteredThisRound);
+    }
+
+    public void clearCanvas(MouseEvent mouseEvent) {
+        graphicsContext.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
 }

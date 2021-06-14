@@ -2,6 +2,8 @@ package dojo;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
@@ -23,12 +26,15 @@ import statistics.Statistics;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.ResourceBundle;
 
 public class DojoController implements Initializable {
     @FXML
     public Label level;
+    @FXML
+    public ComboBox levelComboBox;
     @FXML
     private Slider fontSizeSlider;
     @FXML
@@ -43,8 +49,8 @@ public class DojoController implements Initializable {
     private int promptTextShowed;
     private GraphicsContext dojoGraphicsContext;
     private boolean isTranslateSelected = false;
-    //todo default jisho model
     private JishoResponseModel currentModel;
+    private final ObservableList<String> LEVELS = FXCollections.observableArrayList(Arrays.asList("n1", "n2", "n3", "n4", "n5"));
 
 
     @Override
@@ -53,7 +59,7 @@ public class DojoController implements Initializable {
         setPen();
         promptTextShowed = 0;
         fontSizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> promptText.setFont(new Font(fontSizeSlider.getValue())));
-
+        levelComboBox.getItems().addAll(LEVELS);
     }
 
     public void goBackToStatisticsScreen(MouseEvent mouseEvent) throws IOException {
@@ -67,20 +73,23 @@ public class DojoController implements Initializable {
 
 
     public void showKanasOnCanvas(MouseEvent mouseEvent) {
-        switch (promptTextShowed){
-            case 0:{
-                promptText.setText(currentModel.getReading());
-                promptTextShowed++;
-            } break;
-            case 1: {
-                promptText.setText(currentModel.getWord());
-                promptTextShowed++;
-            } break;
-            case 2: {
-                promptText.setText("");
-                promptTextShowed = 0;
-            } break;
+        if(currentModel != null){
+            switch (promptTextShowed){
+                case 0:{
+                    promptText.setText("");
+                    promptTextShowed++;
+                } break;
+                case 1: {
+                    promptText.setText(currentModel.getReading());
+                    promptTextShowed++;
+                } break;
+                case 2: {
+                    promptText.setText(currentModel.getWord());
+                    promptTextShowed = 0;
+                } break;
+            }
         }
+
 
 
     }
@@ -98,6 +107,11 @@ public class DojoController implements Initializable {
             displayLevelsString.append(level.substring(6, 8)).append("\n");
         }
         level.setText(displayLevelsString.toString());
+
+        // clear canvas of drawings and hints
+        clearCanvas(null);
+        promptTextShowed = 0;
+        showKanasOnCanvas(null);
     }
 
     public void setPen(){
@@ -112,10 +126,11 @@ public class DojoController implements Initializable {
     }
 
     public void toggleTranslate(MouseEvent mouseEvent) {
-        if(isTranslateSelected)setJapaneseText();
-        else setEnglishText();
-        isTranslateSelected = !isTranslateSelected;
-
+        if(currentModel != null){
+            if(isTranslateSelected)setJapaneseText();
+            else setEnglishText();
+            isTranslateSelected = !isTranslateSelected;
+        }
     }
 
     private void setJapaneseText(){
@@ -132,4 +147,9 @@ public class DojoController implements Initializable {
         reading.setFont(new Font(15));
     }
 
+    public void chooseLanguageLevel(ActionEvent actionEvent) {
+        JishoResponseModel.setLevel(levelComboBox.getValue().toString());
+        JishoResponseModel.setJishoModelArrayList(JishoResponseModel.getWords(JishoResponseModel.getUrl() + JishoResponseModel.getLevel()));
+        selectRandomWord(null);
+    }
 }
